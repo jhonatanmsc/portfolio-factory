@@ -13,9 +13,6 @@ export function activeLi(){
     li.onclick = () => {
       links.forEach(li => li.classList.remove("active"));
       li.classList.toggle('active');
-      document.animate({
-        scrollTop: $('.resume-section').offset().top
-      }, 200);
     }
   });
 
@@ -33,13 +30,8 @@ export function activeLi(){
       if (wS+1 > hT && wS < (hT + hH)){
         let a = $(lis).find(`a[href*='#${section.id}']`);
         $(a).addClass('active');
-        console.log('li');
       }
     });
     
   })
-  // li.onclick = function() {
-  //   this.classList.toggle('active');
-  //   console.log("okok");
-  // }
 }
