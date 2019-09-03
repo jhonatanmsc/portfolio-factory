@@ -2,7 +2,7 @@
     <div class="intro">
     <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="about">
         <div class="w-100">
-        <h1 class="mb-0">Jhonatan<span class="text-primary">Msc</span></h1>
+        <h1 class="mb-0 jmsc">Jhonatan<span class="text-primary">Msc</span></h1>
         <div class="subheading mb-5">Timon · Maranhão <br> 
             <a href="mailto:jhonmscosta@gmail.com">jhonmscosta@gmail.com</a>
         </div>
@@ -30,3 +30,10 @@
     </section>
     </div>
 </template>
+
+<style scoped>
+.jmsc {
+    font-size: 6rem;
+    font-weight: 700;
+}
+</style>

@@ -30,6 +30,7 @@ import Exp from '@/components/Exp'
 import Edu from '@/components/Edu'
 import Skills from '@/components/Skills'
 import Interests from '@/components/Interests'
+import { activeLi } from '@/assets/theme/js/resume.js'
 
 export default {
   name: "app",
@@ -40,7 +41,10 @@ export default {
     Edu,
     Skills,
     Interests
-  },  
+  },
+  mounted: function() {
+    activeLi()
+  }
 }
 </script>
 
@@ -50,8 +54,9 @@ export default {
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-mfizz/2.4.1/font-mfizz.min.css');
 @import './assets/theme/css/resume.min.css';
 
-html {
-  scroll-behavior: smooth;
+body {
+  color: #868e96 !important;
+  font-family: Muli !important;
 }
 
 nav {
@@ -65,5 +70,12 @@ h1{
   h1 {
     font-size: 3rem;
   }
+}
+.subtitle {
+  font-size: 3.5rem;
+  font-weight: 700;
+}
+.subsubtitle {
+  font-size: 2rem;
 }
 </style>

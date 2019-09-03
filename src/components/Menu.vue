@@ -12,9 +12,9 @@
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav">
+        <ul class="navbar-nav" >
             <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#about">Sobre</a>
+            <a class="nav-link js-scroll-trigger active" href="#about">Sobre</a>
             </li>
             <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#experience">Experiência</a>
@@ -42,5 +42,7 @@ export default {
 </script>
 
 <style scoped>
-
+.nav-link:active {
+    color: rgba(255, 255, 255, 0.75) !important;
+}
 </style>

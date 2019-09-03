@@ -22,10 +22,9 @@
                 <i class="fab fa-node-js" title="Node"></i>
                 </li>
                 <li class="list-inline-item">
-                <li class="list-inline-item">
                 <i class="fab fa-php" title="PHP"></i>
                 </li>
-                <li>
+                <li class="list-inline-item">
                 <i class="fab fa-react" title="Reactjs"></i>
                 </li>
                 <li class="list-inline-item">

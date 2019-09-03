@@ -2,11 +2,11 @@
     <div class="exp">
         <section class="resume-section p-3 p-lg-5 d-flex justify-content-center" id="experience">
             <div class="w-100">
-            <h2 class="mb-5">Experiência</h2>
+            <h2 class="mb-5 subtitle">Experiência</h2>
 
                 <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
                 <div class="resume-content">
-                    <h3 class="mb-0">Web Developer (JS)</h3>
+                    <h3 class="mb-0 subsubtitle">Web Developer (JS)</h3>
                     <div class="subheading mb-3">LIB UFPI - pHLA3D</div>
                     <p>Mantenho um js de rotinas que interage com uma versão customizada por mim da biblioteca 3Dmol.js para renderização de moleculas 3D.</p>
                 </div>
@@ -16,7 +16,7 @@
                 </div>
                 <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
                 <div class="resume-content">
-                    <h3 class="mb-0">Estagiário Backend (Python)</h3>
+                    <h3 class="mb-0 subsubtitle">Estagiário Backend (Python)</h3>
                     <div class="subheading mb-3">INFOG2</div>
                     <p>Desenvolvimento e manutenção de sistema legado de seguros usando o framework django.</p>
                 </div>
@@ -26,7 +26,7 @@
                 </div>
                 <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
                 <div class="resume-content">
-                    <h3 class="mb-0">Estagiário Redes</h3>
+                    <h3 class="mb-0 subsubtitle">Estagiário Redes</h3>
                     <div class="subheading mb-3">Drogarias Globo</div>
                     <p>Suporte ao sistema, a rede interna de internet das várias lojas e aos colaboradores.</p>
                 </div>
