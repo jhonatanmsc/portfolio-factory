@@ -12,7 +12,21 @@
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav" >
+        <ul class="navbar-nav" v-if="debug == true">
+            <li class="nav-item">
+            <h2 style="color: white;">Modo de edição</h2>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#edit-exp">Experiência</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#edit-edu">Educação</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#edit-skills">Skills</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav" v-if="debug == false">
             <li class="nav-item">
             <a class="nav-link js-scroll-trigger active" href="#about">Sobre</a>
             </li>
@@ -38,6 +52,7 @@
 <script>
 export default {
     name: "Menu",
+    props: ['debug']
 }
 </script>
 
