@@ -1,49 +1,31 @@
 <template>
   <div id="app">
-    <Menu />
+    
+    <Menu :debug="DEBUG" />
 
-    <div class="container-fluid p-0">
-
-      <Intro />
-      <hr class="m-0">
-
-      <Exp />
-      <hr class="m-0">
-
-      <Edu />
-      <hr class="m-0">
-
-      <Skills />
-      <hr class="m-0">
-
-      <Interests />
-      <hr class="m-0">
-
+    <div v-if="DEBUG" id="nav" style="text-align: right; padding: 1rem;">
+      <router-link to="/">PROD</router-link> |
+      <router-link to="/dev">DEV</router-link>
     </div>
+    <router-view />
   </div>
 </template>
 
 <script>
 import Menu from '@/components/Menu'
-import Intro from '@/components/Intro'
-import Exp from '@/components/Exp'
-import Edu from '@/components/Edu'
-import Skills from '@/components/Skills'
-import Interests from '@/components/Interests'
-import { activeLi } from '@/assets/theme/js/resume.js'
 
 export default {
   name: "app",
-  components: {
-    Menu,
-    Intro,
-    Exp,
-    Edu,
-    Skills,
-    Interests
+  data() {
+    return {
+      DEBUG: true
+    }
   },
-  mounted: function() {
-    activeLi()
+  components: {
+    Menu
+  },
+  mount: function() {
+    
   }
 }
 </script>
