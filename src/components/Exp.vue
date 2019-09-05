@@ -10,29 +10,9 @@
                         <p>{{ item.descr }}</p>
                     </div>
                     <div class="resume-date text-md-right">
-                        <span class="text-primary">{{ item.date_end }}</span>
+                        <span class="text-primary">{{ labelDateEnd(item) }}</span>
                     </div>
                 </div>
-                <!-- <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-                <div class="resume-content">
-                    <h3 class="mb-0 subsubtitle">Estagiário Backend (Python)</h3>
-                    <div class="subheading mb-3">INFOG2</div>
-                    <p>Desenvolvimento e manutenção de sistema legado de seguros usando o framework django.</p>
-                </div>
-                <div class="resume-date text-md-right">
-                    <span class="text-primary">Outubro 2018 - Dezebro 2018</span>
-                </div>
-                </div> -->
-                <!-- <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-                    <div class="resume-content">
-                        <h3 class="mb-0 subsubtitle">Estagiário Redes</h3>
-                        <div class="subheading mb-3">Drogarias Globo</div>
-                        <p>Suporte ao sistema, a rede interna de internet das várias lojas e aos colaboradores.</p>
-                    </div>
-                    <div class="resume-date text-md-right">
-                        <span class="text-primary">Fevereiro 2018 - Dezembro 2018</span>
-                    </div>
-                </div> -->
 
             </div>
         </section>
@@ -45,7 +25,6 @@
 export default {
     data() {
       return {
-        fields: ["title", "subtitle", "actions"],
         items: []
       }
     },
@@ -55,10 +34,28 @@ export default {
       let self = this
       this.$db.ref('exp')
         .on('value', function(snapshot) {
-            console.log(snapshot.val().replace(/'/g,"\""))
             self.items = JSON.parse(snapshot.val().replace(/'/g,"\""))
-            console.log(self.items)
         })
+    },
+    methods: {
+        labelDateEnd(item) {
+            let dateEnd;
+            let dateStart = new Date(item.date_start);
+            var options = { year: 'numeric', month: 'long' };
+            if (!item.date_end) {
+                dateEnd = 'Atualmente';
+            } else {
+                dateEnd = new Date(item.date_end);
+                dateEnd = dateEnd.toLocaleDateString('pt-BR', options);
+                dateEnd = dateEnd.split(' de ');
+                dateEnd = `${dateEnd[0].charAt(0).toUpperCase()+dateEnd[0].slice(1)} ${dateEnd[1]}`;
+            }
+            dateStart = dateStart.toLocaleDateString('pt-BR', options);
+            dateStart = dateStart.split(' de ');
+            dateStart = `${dateStart[0].charAt(0).toUpperCase()+dateStart[0].slice(1)} ${dateStart[1]}`;
+            
+            return `${dateStart}${dateEnd ? ' - ' + dateEnd : ''}`;
+        }
     }
 }
 </script>
