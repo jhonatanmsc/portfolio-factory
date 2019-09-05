@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     
-    <Menu :debug="DEBUG" />
+    <Menu :debug="debugMode" />
 
     <button type="button" class="btn btn-secondary float-right" style="margin: 0.6rem;" @click="toggleMode">
       <i class="fas fa-cogs"></i>
@@ -18,20 +18,20 @@ export default {
   name: "app",
   data() {
     return {
-      DEBUG: false
+      DEBUG: process.env.VUE_APP_DEBUG === 'true' ? true : false,
+      debugMode: process.env.VUE_APP_DEBUG === 'true' ? false : true
     }
   },
   components: {
     Menu
   },
-  mount: function() {},
   methods: {
     toggleMode() {
-      if(this.DEBUG) {
-        this.DEBUG = false
+      if(this.debugMode) {
+        this.debugMode = false
         this.$router.push('/')
       } else {
-        this.DEBUG = true
+        this.debugMode = true
         this.$router.push('dev')
       }
     }
