@@ -2,9 +2,9 @@
     <div class="menu">
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav"
     style="background-image: linear-gradient(#1a237e, #1565c0); background-color: transparent !important;">
-        <a class="navbar-brand js-scroll-trigger" href="#page-top">
-        <span class="d-block d-lg-none">Jhonatan Matheus</span>
-        <span class="d-none d-lg-block">
+        <a class="navbar-brand js-scroll-trigger row" href="#page-top">
+        <span class="d-block d-lg-none col-sm-12 mb-4">Jhonatan Matheus</span>
+        <span class="d-none d-lg-block col-sm-12">
             <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="@/assets/profile.jpg" alt="">
         </span>
         </a>
@@ -12,7 +12,7 @@
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav" v-if="debug == true">
+        <ul class="navbar-nav" v-if="debug">
             <li class="nav-item">
             <h2 style="color: white;">Modo de edição</h2>
             </li>
@@ -26,7 +26,7 @@
             <a class="nav-link js-scroll-trigger" href="#edit-skills">Skills</a>
             </li>
         </ul>
-        <ul class="navbar-nav" v-if="debug == false">
+        <ul class="navbar-nav" v-if="debug==false">
             <li class="nav-item">
             <a class="nav-link js-scroll-trigger active" href="#about">Sobre</a>
             </li>
@@ -52,7 +52,7 @@
 <script>
 export default {
     name: "Menu",
-    props: ['debug']
+    props: ['debug'],
 }
 </script>
 

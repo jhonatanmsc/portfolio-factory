@@ -3,6 +3,9 @@
     
     <Menu :debug="DEBUG" />
 
+    <button type="button" class="btn btn-secondary float-left" style="margin: 0.6rem;" @click="toggleMode">
+      <i class="fas fa-cogs"></i>
+    </button>
     <div v-if="DEBUG" id="nav" style="text-align: right; padding: 1rem;">
       <router-link to="/">PROD</router-link> |
       <router-link to="/dev">DEV</router-link>
@@ -18,14 +21,20 @@ export default {
   name: "app",
   data() {
     return {
-      DEBUG: true
+      DEBUG: false
     }
   },
   components: {
     Menu
   },
-  mount: function() {
-    
+  mount: function() {},
+  methods: {
+    toggleMode() {
+      if(this.DEBUG)
+        this.DEBUG = false
+      else
+        this.DEBUG = true
+    }
   }
 }
 </script>
