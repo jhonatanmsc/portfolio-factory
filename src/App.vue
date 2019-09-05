@@ -3,13 +3,10 @@
     
     <Menu :debug="DEBUG" />
 
-    <button type="button" class="btn btn-secondary float-left" style="margin: 0.6rem;" @click="toggleMode">
+    <button type="button" class="btn btn-secondary float-right" style="margin: 0.6rem;" @click="toggleMode">
       <i class="fas fa-cogs"></i>
     </button>
-    <div v-if="DEBUG" id="nav" style="text-align: right; padding: 1rem;">
-      <router-link to="/">PROD</router-link> |
-      <router-link to="/dev">DEV</router-link>
-    </div>
+    
     <router-view />
   </div>
 </template>
@@ -30,10 +27,13 @@ export default {
   mount: function() {},
   methods: {
     toggleMode() {
-      if(this.DEBUG)
+      if(this.DEBUG) {
         this.DEBUG = false
-      else
+        this.$router.push('/')
+      } else {
         this.DEBUG = true
+        this.$router.push('dev')
+      }
     }
   }
 }
