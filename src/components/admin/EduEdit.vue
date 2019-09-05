@@ -2,13 +2,13 @@
   <div>
     <section
       class="resume-section p-3 p-lg-5 d-flex align-items-center"
-      id="edit-exp"
+      id="edit-edu"
     >
       <div class="w-100">
         <h2>
-          Editar Experiencia
+          Editar Educação
           <b-button
-            v-b-modal="`modal[add]`"
+            v-b-modal="`modal[edu][add]`"
             variant="outline-primary float-right"
           >
             <i class="far fa-plus-square"></i>
@@ -28,7 +28,7 @@
               <td>{{ item.subtitle }}</td>
               <td>
                 <b-button
-                  v-b-modal="`modal[upd][${item.subtitle}]`"
+                  v-b-modal="`modal[edu][upd][${item.subtitle}]`"
                   size="sm"
                   class="mr-2"
                   variant="warning"
@@ -36,7 +36,7 @@
                   <i class="far fa-edit"></i>
                 </b-button>
                 <b-button
-                  v-b-modal="`modal[del][${item.subtitle}]`"
+                  v-b-modal="`modal[edu][del][${item.subtitle}]`"
                   size="sm"
                   class="mr-2"
                   variant="danger"
@@ -50,7 +50,7 @@
         <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Init Edit Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
         <div v-for="item in items" :key="item.date_end">
           <b-modal
-            :id="`modal[upd][${item.subtitle}]`"
+            :id="`modal[edu][upd][${item.subtitle}]`"
             ref="modal"
             title="Edit post"
             @show="loadItem(item)"
@@ -75,7 +75,7 @@
                 invalid-feedback="Subtitulo é obrigatório"
               >
                 <b-form-input
-                  id="title-input"
+                  id="subtitle-input"
                   v-model="subtitle"
                   required
                 ></b-form-input>
@@ -128,7 +128,7 @@
         <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Init Del Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
         <div v-for="item in items" :key="item.date_end">
           <b-modal
-            :id="`modal[del][${item.subtitle}]`"
+            :id="`modal[edu][del][${item.subtitle}]`"
             ref="modal"
             title="Delete post"
             @show="loadItem(item)"
@@ -153,7 +153,7 @@
                 invalid-feedback="Subtitulo é obrigatório"
               >
                 <b-form-input
-                  id="title-input"
+                  id="subtitle-input"
                   v-model="subtitle"
                   readonly
                 ></b-form-input>
@@ -208,7 +208,7 @@
 
         <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Init Add Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
         <b-modal
-          id="modal[add]"
+          id="modal[edu][add]"
           ref="modal"
           title="Novo post"
           @show="resetModal"
@@ -300,7 +300,7 @@ export default {
   computed: {},
   mounted: function() {
     let self = this;
-    this.$db.ref("exp").on("value", function(snapshot) {
+    this.$db.ref("edu").on("value", function(snapshot) {
       self.items = JSON.parse(snapshot.val().replace(/'/g, "\""))
     });
   },
@@ -355,11 +355,12 @@ export default {
       });
     },
     add() {
+      let str = `${this.date_end.split('-')[1]}-${this.date_end.split('-')[0]}-01`;
       let item = {
         title: this.title,
         subtitle: this.subtitle,
-        date_start: this.date_start,
-        date_end: this.date_end,
+        date_start: `${this.date_start.split('-')[1]}-${this.date_start.split('-')[0]}-01`,
+        date_end: this.date_end ? str : '',
         descr: this.descr
       };
       this.items.push(item);
@@ -397,7 +398,7 @@ export default {
     },
     _store() {
       let self = this;
-      this.$db.ref("exp").set(JSON.stringify(self.items).replace(/"/g, "'"));
+      this.$db.ref("edu").set(JSON.stringify(self.items).replace(/"/g, "'"));
     }
   }
 };
