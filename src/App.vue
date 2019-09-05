@@ -3,7 +3,7 @@
     
     <Menu :debug="debugMode" />
 
-    <button type="button" class="btn btn-secondary float-right" style="margin: 0.6rem;" @click="toggleMode">
+    <button v-if="DEBUG" type="button" class="btn btn-secondary float-right" style="margin: 0.6rem;" @click="toggleMode">
       <i class="fas fa-cogs"></i>
     </button>
     
@@ -19,7 +19,7 @@ export default {
   data() {
     return {
       DEBUG: process.env.VUE_APP_DEBUG === 'true' ? true : false,
-      debugMode: process.env.VUE_APP_DEBUG === 'true' ? false : true
+      debugMode: false
     }
   },
   components: {
