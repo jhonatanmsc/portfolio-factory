@@ -2,11 +2,9 @@
   <div id="app">
     
     <Menu :debug="debugMode" />
-
-    <button v-if="DEBUG" type="button" class="btn btn-secondary float-right" style="margin: 0.6rem;" @click="toggleMode">
-      <i class="fas fa-cogs"></i>
-    </button>
-    
+      <button v-if="DEBUG" type="button" class="btn btn-secondary fixed-top float-right" style="margin: 0.6rem;" @click="toggleMode">
+        <i class="fas fa-cogs"></i>
+      </button>
     <router-view />
   </div>
 </template>
