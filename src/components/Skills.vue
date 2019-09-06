@@ -31,18 +31,24 @@
 </template>
 
 <script>
+import {ordByDate} from '@/assets/theme/js/dbmanager'
+
 export default {
   data() {
     return {
-      fields: ["title", "subtitle", "actions"],
-      items: []
+      fields: ["title", "icon", "actions"],
+      items: [],
+      id: null
     }
   },
   mounted: function() {
     let self = this
+    this.$db.ref('idSkills').on('value', snapshot => {
+      self.id = snapshot.val()
+    })
     this.$db.ref('skills')
       .on('value', function(snapshot) {
-          self.items = JSON.parse(snapshot.val().replace(/'/g,"\""))
+        self.items = JSON.parse(snapshot.val().replace(/'/g,"\""))
       })
   },
 }
