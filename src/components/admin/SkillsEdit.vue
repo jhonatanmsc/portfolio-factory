@@ -17,20 +17,20 @@
         <table class="table table-hover table-striped">
           <thead>
             <tr style="text-transform: capitalize; font-size: 1.2rem;">
-              <th v-for="field in fields" :key="field" scope="col">
+              <th v-for="field in fields" :key="field + '-skills'" scope="col">
                 {{ field }}
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in items" :key="item.title">
+            <tr v-for="item in items" :key="item.id">
               <td>{{ item.title }}</td>
               <td :style="`color: ${item.color}`">
                 <i style="font-size: 2rem;" :title="item.title" :class="item.icon" aria-hidden="true"></i>
               </td>
               <td>
                 <b-button
-                  v-b-modal="`modal[skills][upd][${item.title}]`"
+                  v-b-modal="`modal[skills][upd][${item.id}]`"
                   size="sm"
                   class="mr-2"
                   variant="warning"
@@ -38,7 +38,7 @@
                   <i class="far fa-edit"></i>
                 </b-button>
                 <b-button
-                  v-b-modal="`modal[skills][del][${item.title}]`"
+                  v-b-modal="`modal[skills][del][${item.id}]`"
                   size="sm"
                   class="mr-2"
                   variant="danger"
@@ -50,9 +50,9 @@
           </tbody>
         </table>
         <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Init Edit Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
-        <div v-for="item in items" :key="item.date_end">
+        <div v-for="item in items" :key="item.id">
           <b-modal
-            :id="`modal[skills][upd][${item.title}]`"
+            :id="`modal[skills][upd][${item.id}]`"
             ref="modal"
             title="Edit post"
             @show="loadItem(item)"
@@ -99,9 +99,9 @@
         <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX End Edit Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
 
         <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Init Del Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
-        <div v-for="item in items" :key="item.date_end">
+        <div v-for="item in items" :key="item.id">
           <b-modal
-            :id="`modal[skills][del][${item.subtitle}]`"
+            :id="`modal[skills][del][${item.id}]`"
             ref="modal"
             title="Delete post"
             @show="loadItem(item)"
@@ -207,13 +207,17 @@ export default {
       items: [],
       title: null,
       icon: null,
-      color: null
+      color: null,
+      id: null
     };
   },
   components: {},
   computed: {},
   mounted: function() {
     let self = this;
+    this.$db.ref('idSkills').on('value', snapshot => {
+      self.id = snapshot.val()
+    })
     this.$db.ref("skills").on("value", function(snapshot) {
       self.items = JSON.parse(snapshot.val().replace(/'/g, "\""))
     });
@@ -225,11 +229,13 @@ export default {
       return valid;
     },
     resetModal() {
+      this.id = ""
       this.title = "";
       this.icon = "";
       this.color = "";
     },
     loadItem(item) {
+      this.id = item.id
       this.title = item.title;
       this.icon = item.icon;
       this.color = item.color;
@@ -265,7 +271,9 @@ export default {
       });
     },
     add() {
+      this.id++
       let item = {
+        id: this.id,
         title: this.title,
         icon: this.icon,
         color: this.color
@@ -276,7 +284,7 @@ export default {
     remove() {
       let index;
       this.items.forEach((el, i, list) => {
-        if (list[i].title == this.title) {
+        if (list[i].id == this.id) {
           index = i;
         }
       });
@@ -288,7 +296,7 @@ export default {
     },
     update() {
       this.items.forEach((el, i, list) => {
-        if (list[i].title == this.title) {
+        if (list[i].id == this.id) {
           list[i] = {
             title: this.title,
             icon: this.icon,
@@ -303,6 +311,7 @@ export default {
     },
     _store() {
       let self = this;
+      this.$db.ref("idSkills").set(self.id);
       this.$db.ref("skills").set(JSON.stringify(self.items).replace(/"/g, "'"));
     }
   }
