@@ -17,18 +17,18 @@
         <table class="table table-hover table-striped">
           <thead>
             <tr style="text-transform: capitalize; font-size: 1.2rem;">
-              <th v-for="field in fields" :key="field + '-exp'" scope="col">
+              <th v-for="(field, i) in fields" :key="`${field}-${i}-thead-exp`" scope="col">
                 {{ field }}
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in items" :key="item.id">
+            <tr v-for="(item, i) in items" :key="`${item.id}-${i}-tbody-exp`">
               <td>{{ item.title }}</td>
               <td>{{ item.subtitle }}</td>
               <td>
                 <b-button
-                  v-b-modal="`modal[exp][upd][${item.id}]`"
+                  v-b-modal="`modal[exp][upd][${i}]`"
                   size="sm"
                   class="mr-2"
                   variant="warning"
@@ -36,7 +36,7 @@
                   <i class="far fa-edit"></i>
                 </b-button>
                 <b-button
-                  v-b-modal="`modal[exp][del][${item.id}]`"
+                  v-b-modal="`modal[exp][del][${i}]`"
                   size="sm"
                   class="mr-2"
                   variant="danger"
@@ -48,16 +48,16 @@
           </tbody>
         </table>
         <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Init Edit Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
-        <div v-for="item in items" :key="item.id">
+        <div v-for="(item, i) in items" :key="`${item.id}-${i}-exp-edit`">
           <b-modal
-            :id="`modal[exp][upd][${item.id}]`"
+            :id="`modal[exp][upd][${i}]`"
             ref="modal"
             title="Edit post"
-            @show="loadItem(item)"
+            @show="loadItem(item, i)"
             @hidden="resetModal"
             @ok="handleUpdateOk"
           >
-            <form ref="form" @submit.stop.prevent="update(item)">
+            <form ref="form">
               <b-form-group
                 label="Título"
                 label-for="title-input"
@@ -90,7 +90,7 @@
                       id="date-start-input"
                       v-model="date_start"
                       placeholder="12-2019"
-                      v-mask="'##/####'"
+                      v-mask="'##-####'"
                     ></b-form-input>
                   </b-form-group>
                 </b-col>
@@ -103,7 +103,7 @@
                       id="date-end-input"
                       v-model="date_end"
                       placeholder="12-2019"
-                      v-mask="'##/####'"
+                      v-mask="'##-####'"
                     ></b-form-input>
                   </b-form-group>
                 </b-col>
@@ -126,16 +126,16 @@
         <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX End Edit Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
 
         <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Init Del Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
-        <div v-for="item in items" :key="item.id">
+        <div v-for="(item, i) in items" :key="`${item.id}-${i}-exp-del`">
           <b-modal
-            :id="`modal[exp][del][${item.id}]`"
+            :id="`modal[exp][del][${i}]`"
             ref="modal"
             title="Delete post"
-            @show="loadItem(item)"
+            @show="loadItem(item, i)"
             @hidden="resetModal"
             @ok="handleDeleteOk"
           >
-            <form ref="form" @submit.stop.prevent="remove">
+            <form ref="form">
               <b-form-group
                 label="Título"
                 label-for="title-input"
@@ -168,7 +168,7 @@
                       id="date-start-input"
                       v-model="date_start"
                       placeholder="12-2019"
-                      v-mask="'##/####'"
+                      v-mask="'##-####'"
                       readonly
                     ></b-form-input>
                   </b-form-group>
@@ -182,7 +182,7 @@
                       id="date-end-input"
                       v-model="date_end"
                       placeholder="12-2019"
-                      v-mask="'##/####'"
+                      v-mask="'##-####'"
                       readonly
                     ></b-form-input>
                   </b-form-group>
@@ -215,7 +215,7 @@
           @hidden="resetModal"
           @ok="handleOk"
         >
-          <form ref="form" @submit.stop.prevent="handleSubmit">
+          <form ref="form">
             <b-form-group
               label="Título"
               label-for="title-input"
@@ -289,23 +289,19 @@ export default {
     return {
       fields: ["title", "subtitle", "actions"],
       items: [],
+      key: null,
       title: null,
       subtitle: null,
       descr: null,
       date_start: null,
       date_end: null,
-      id: null
     };
   },
   components: {},
   computed: {},
   mounted: function() {
-    let self = this;
-    this.$db.ref('idExp').on('value', snapshot => {
-      self.id = snapshot.val()
-    })
-    this.$db.ref("exp").on("value", function(snapshot) {
-      self.items = JSON.parse(snapshot.val().replace(/'/g, "\""))
+    this.$db.ref("exp").on("value", snapshot => {
+      this.items = snapshot.val()
     });
   },
   methods: {
@@ -315,19 +311,20 @@ export default {
       return valid;
     },
     resetModal() {
-      this.id = "";
+      this.key = null;
       this.title = "";
       this.subtitle = "";
       this.descr = "";
       this.date_start = "";
       this.date_end = "";
     },
-    loadItem(item) {
-      this.id = item.id
+    loadItem(item, key) {
+      this.key = key
       this.title = item.title;
       this.subtitle = item.subtitle;
-      this.date_end = item.date_end.split('-')[1]+item.date_end.split('-')[0];
-      this.date_start = item.date_start.split('-')[1]+item.date_start.split('-')[0];
+      if(item.date_end)
+        this.date_end = item.date_end
+      this.date_start = item.date_start
       this.descr = item.descr;
     },
     handleUpdateOk(bvModalEvt) {
@@ -362,53 +359,40 @@ export default {
     },
     add() {
       let str = `${this.date_end.split('-')[1]}-${this.date_end.split('-')[0]}-01`;
-      this.id++
       let item = {
-        id: this.id,
         title: this.title,
         subtitle: this.subtitle,
         date_start: `${this.date_start.split('-')[1]}-${this.date_start.split('-')[0]}-01`,
         date_end: this.date_end ? str : '',
         descr: this.descr
       };
-      this.items.push(item);
-      this._store();
+      this.$db.ref("exp").push(item);
+      this.$nextTick(() => {
+        this.$bvModal.hide(`modal[exp][add]`)
+      });
     },
     remove() {
-      let index;
-      this.items.forEach((el, i, list) => {
-        if (list[i].id == this.id) {
-          index = i;
-        }
-      });
-      this.items.splice(index, 1);
+      this.$db.ref(`exp/${this.key}`).remove()
       this.$nextTick(() => {
         this.$refs.modal.hide();
       });
-      this._store();
     },
     update() {
-      this.items.forEach((el, i, list) => {
-        if (list[i].id == this.id) {
-          list[i] = {
-            title: this.title,
-            subtitle: this.subtitle,
-            descr: this.descr,
-            date_start: this.date_start,
-            date_end: this.date_end
-          };
-        }
-      });
+      let str = `${this.date_end.split('-')[1]}-${this.date_end.split('-')[0]}-01`;
+      let item = {
+        title: this.title,
+        subtitle: this.subtitle,
+        date_start: `${this.date_start.split('-')[1]}-${this.date_start.split('-')[0]}-01`,
+        date_end: this.date_end ? str : '',
+        descr: this.descr
+      };
+      let up = {}
+      up[`/exp/${this.key}`] = item;
+      this.$db.ref().update(up);
       this.$nextTick(() => {
-        this.$refs.modal.hide();
+        this.$bvModal.hide(`modal[exp][upd][${this.key}]`)
       });
-      this._store();
     },
-    _store() {
-      let self = this;
-      this.$db.ref("idExp").set(self.id);
-      this.$db.ref("exp").set(JSON.stringify(self.items).replace(/"/g, "'"));
-    }
   }
 };
 </script>

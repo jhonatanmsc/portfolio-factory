@@ -17,20 +17,20 @@
         <table class="table table-hover table-striped">
           <thead>
             <tr style="text-transform: capitalize; font-size: 1.2rem;">
-              <th v-for="field in fields" :key="field + '-skills'" scope="col">
+              <th v-for="(field, i) in fields" :key="`${field}-${i}-thead-skills`" scope="col">
                 {{ field }}
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in items" :key="item.id">
+            <tr v-for="(item, i) in items" :key="`${item.id}-${i}-tbody-skills`">
               <td>{{ item.title }}</td>
               <td :style="`color: ${item.color}`">
                 <i style="font-size: 2rem;" :title="item.title" :class="item.icon" aria-hidden="true"></i>
               </td>
               <td>
                 <b-button
-                  v-b-modal="`modal[skills][upd][${item.id}]`"
+                  v-b-modal="`modal[skills][upd][${i}]`"
                   size="sm"
                   class="mr-2"
                   variant="warning"
@@ -38,7 +38,7 @@
                   <i class="far fa-edit"></i>
                 </b-button>
                 <b-button
-                  v-b-modal="`modal[skills][del][${item.id}]`"
+                  v-b-modal="`modal[skills][del][${i}]`"
                   size="sm"
                   class="mr-2"
                   variant="danger"
@@ -50,16 +50,16 @@
           </tbody>
         </table>
         <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Init Edit Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
-        <div v-for="item in items" :key="item.id">
+        <div v-for="(item, i) in items" :key="`${item.id}-${i}-skills-edit`">
           <b-modal
-            :id="`modal[skills][upd][${item.id}]`"
+            :id="`modal[skills][upd][${i}]`"
             ref="modal"
             title="Edit post"
             @show="loadItem(item)"
             @hidden="resetModal"
             @ok="handleUpdateOk"
           >
-            <form ref="form" @submit.stop.prevent="update(item)">
+            <form ref="form">
               <b-form-group
                 label="Título"
                 label-for="title-input"
@@ -99,16 +99,16 @@
         <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX End Edit Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
 
         <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Init Del Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
-        <div v-for="item in items" :key="item.id">
+        <div v-for="(item, i) in items" :key="`${item.id}-${i}-skills-del`">
           <b-modal
-            :id="`modal[skills][del][${item.id}]`"
+            :id="`modal[skills][del][${i}]`"
             ref="modal"
             title="Delete post"
             @show="loadItem(item)"
             @hidden="resetModal"
             @ok="handleDeleteOk"
           >
-            <form ref="form" @submit.stop.prevent="remove">
+            <form ref="form">
               <b-form-group
                 label="Título"
                 label-for="title-input"
@@ -157,7 +157,7 @@
           @hidden="resetModal"
           @ok="handleOk"
         >
-          <form ref="form" @submit.stop.prevent="handleSubmit">
+          <form ref="form">
             <b-form-group
               label="Título"
               label-for="title-input"
@@ -205,21 +205,17 @@ export default {
     return {
       fields: ["title", "icon", "actions"],
       items: [],
+      key: null,
       title: null,
       icon: null,
       color: null,
-      id: null
     };
   },
   components: {},
   computed: {},
   mounted: function() {
-    let self = this;
-    this.$db.ref('idSkills').on('value', snapshot => {
-      self.id = snapshot.val()
-    })
-    this.$db.ref("skills").on("value", function(snapshot) {
-      self.items = JSON.parse(snapshot.val().replace(/'/g, "\""))
+    this.$db.ref("skills").on("value", snapshot => {
+      this.items = snapshot.val()
     });
   },
   methods: {
@@ -229,13 +225,13 @@ export default {
       return valid;
     },
     resetModal() {
-      this.id = ""
+      this.key = "";
       this.title = "";
       this.icon = "";
       this.color = "";
     },
-    loadItem(item) {
-      this.id = item.id
+    loadItem(item, key) {
+      this.key = key
       this.title = item.title;
       this.icon = item.icon;
       this.color = item.color;
@@ -271,49 +267,37 @@ export default {
       });
     },
     add() {
-      this.id++
       let item = {
-        id: this.id,
         title: this.title,
         icon: this.icon,
         color: this.color
       };
-      this.items.push(item);
-      this._store();
+      this.$db.ref("skills").push(item);
+      this.$nextTick(() => {
+        this.$bvModal.hide(`modal[skills][add]`)
+      });
     },
     remove() {
-      let index;
-      this.items.forEach((el, i, list) => {
-        if (list[i].id == this.id) {
-          index = i;
-        }
-      });
-      this.items.splice(index, 1);
+      this.$db.ref(`skills/${this.key}`).remove()
       this.$nextTick(() => {
         this.$refs.modal.hide();
       });
-      this._store();
     },
     update() {
-      this.items.forEach((el, i, list) => {
-        if (list[i].id == this.id) {
-          list[i] = {
-            title: this.title,
-            icon: this.icon,
-            color: this.color,
-          };
-        }
-      });
+      let item = {
+        title: this.title,
+        subtitle: this.subtitle,
+        descr: this.descr,
+        date_start: this.date_start,
+        date_end: this.date_end
+      };
+      let up = {}
+      up[`/skills/${this.key}`] = item;
+      this.$db.ref().update(up);
       this.$nextTick(() => {
-        this.$refs.modal.hide();
+        this.$bvModal.hide(`modal[skills][upd][${this.key}]`)
       });
-      this._store();
     },
-    _store() {
-      let self = this;
-      this.$db.ref("idSkills").set(self.id);
-      this.$db.ref("skills").set(JSON.stringify(self.items).replace(/"/g, "'"));
-    }
   }
 };
 </script>
