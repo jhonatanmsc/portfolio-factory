@@ -26,21 +26,19 @@ export default {
     data() {
       return {
         items: [],
-        id: null
       }
     },
     computed: {
     },
     mounted: function() {
-      let self = this
-      this.$db.ref('idEdu').on('value', snapshot => {
-          self.id = snapshot.val()
-      })
-      this.$db.ref('edu')
-        .on('value', function(snapshot) {
-            self.items = JSON.parse(snapshot.val().replace(/'/g,"\""))
-            self.items = ordByDate(self.items)
-        })
+        this.$db.ref('edu')
+            .on('value', snapshot => {
+                this.items = []
+                for(let key in snapshot.val()) {
+                    this.items.push(snapshot.val()[key])
+                }
+                this.items = ordByDate(this.items)
+            })
     },
     methods: {
         strDateEdu(item) {
