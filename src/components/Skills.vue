@@ -38,17 +38,12 @@ export default {
     return {
       fields: ["title", "icon", "actions"],
       items: [],
-      id: null
     }
   },
   mounted: function() {
-    let self = this
-    this.$db.ref('idSkills').on('value', snapshot => {
-      self.id = snapshot.val()
-    })
     this.$db.ref('skills')
-      .on('value', function(snapshot) {
-        self.items = JSON.parse(snapshot.val().replace(/'/g,"\""))
+      .on('value', snapshot => {
+        this.items = snapshot.val()
       })
   },
 }
