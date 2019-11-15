@@ -13,6 +13,13 @@
           >
             <i class="far fa-plus-square"></i>
           </b-button>
+          <b-button
+            class="mr-2"
+            v-b-modal="`modal[skills][temp-edit]`"
+            variant="outline-primary float-right"
+          >
+            <i class="fas fa-puzzle-piece"></i>&nbsp;Editar Template
+          </b-button>
         </h2>
         <table class="table table-hover table-striped">
           <thead>
@@ -25,8 +32,7 @@
           <tbody>
             <tr v-for="(item, i) in items" :key="`${item.id}-${i}-tbody-skills`">
               <td>{{ item.title }}</td>
-              <td :style="`color: ${item.color}`">
-                <i style="font-size: 2rem;" :title="item.title" :class="item.icon" aria-hidden="true"></i>
+              <td :style="`color: ${item.color}`" v-html='mountTemplate(item)'>
               </td>
               <td>
                 <b-button
@@ -194,12 +200,30 @@
           </form>
         </b-modal>
         <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX End Add Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+        <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Init temp-edit Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+        <b-modal
+          id="modal[skills][temp-edit]"
+          ref="modal"
+          title="Editar Template Skills"
+          @ok="handleTemplateOk"
+        >
+          <form ref="form">
+            <codemirror ref="myCm"
+                :value="template"
+                @ready="onReady"
+                @input="onCodeChange">
+            </codemirror>
+            <textarea rows="4" name="template" class="code-editor d-none" id="code-editor"></textarea>
+          </form>
+        </b-modal>
+        <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX End temp-edit Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
       </div>
     </section>
   </div>
 </template>
 
 <script>
+
 export default {
   data() {
     return {
@@ -209,10 +233,16 @@ export default {
       title: null,
       icon: null,
       color: null,
+      template: null,
     };
   },
   components: {},
   computed: {},
+  beforeMount: function() {
+    this.$db.ref("template/skills").on("value", snapshot => {
+      this.template = snapshot.val()
+    });
+  },
   mounted: function() {
     this.$db.ref("skills").on("value", snapshot => {
       this.items = snapshot.val()
@@ -254,6 +284,12 @@ export default {
       // Trigger submit handler
       this.handleSubmit();
     },
+    handleTemplateOk(bvModalEvt) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault();
+      // Trigger submit handler
+      this.saveTemplate();
+    },
     handleSubmit() {
       // Exit when the form isn't valid
       if (!this.checkFormValidity()) {
@@ -265,6 +301,14 @@ export default {
       this.$nextTick(() => {
         this.$refs.modal.hide();
       });
+    },
+    onCodeChange(newTemplate) {
+      this.template = newTemplate;
+    },
+    onReady(cm) {
+      setTimeout(() => {
+        cm.refresh();
+      }, 200);
     },
     add() {
       let item = {
@@ -298,6 +342,22 @@ export default {
         this.$bvModal.hide(`modal[skills][upd][${this.key}]`)
       });
     },
+    saveTemplate() {
+      this.$db.ref("template/skills").set(this.template, function(error) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Ok");
+        }
+      });
+      this.$nextTick(() => {
+        this.$bvModal.hide(`modal[skills][temp-edit]`)
+      });
+    },
+    mountTemplate(item) {
+      return this.template.replace('item.title', item.title)
+                        .replace('item.icon', item.icon);
+    }
   }
 };
 </script>

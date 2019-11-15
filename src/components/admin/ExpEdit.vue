@@ -13,6 +13,13 @@
           >
             <i class="far fa-plus-square"></i>
           </b-button>
+          <b-button
+            class="mr-2"
+            v-b-modal="`modal[exp][temp-edit]`"
+            variant="outline-primary float-right"
+          >
+            <i class="fas fa-puzzle-piece"></i>&nbsp;Editar Template
+          </b-button>
         </h2>
         <table class="table table-hover table-striped">
           <thead>
@@ -278,6 +285,24 @@
           </form>
         </b-modal>
         <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX End Add Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+       
+        <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Init temp-edit Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+        <b-modal
+          id="modal[exp][temp-edit]"
+          ref="modal"
+          title="Editar Template Post"
+          @ok="handleTemplateOk"
+        >
+          <form ref="form">
+            <codemirror ref="myCm"
+                :value="template"
+                @ready="onReady"
+                @input="onCodeChange">
+            </codemirror>
+            <textarea rows="4" name="template" class="code-editor d-none" id="code-editor"></textarea>
+          </form>
+        </b-modal>
+        <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX End temp-edit Modal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
       </div>
     </section>
   </div>
@@ -295,10 +320,16 @@ export default {
       descr: null,
       date_start: null,
       date_end: null,
+      template: null,
     };
   },
   components: {},
   computed: {},
+  beforeMount: function() {
+    this.$db.ref("template/post").on("value", snapshot => {
+      this.template = snapshot.val()
+    });
+  },
   mounted: function() {
     this.$db.ref("exp").on("value", snapshot => {
       this.items = snapshot.val()
@@ -357,6 +388,20 @@ export default {
         this.$refs.modal.hide();
       });
     },
+    onCodeChange(newTemplate) {
+      this.template = newTemplate;
+    },
+    handleTemplateOk(bvModalEvt) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault();
+      // Trigger submit handler
+      this.saveTemplate();
+    },
+    onReady(cm) {
+      setTimeout(() => {
+        cm.refresh();
+      }, 200);
+    },
     add() {
       let str = `${this.date_end.split('-')[1]}-${this.date_end.split('-')[0]}-01`;
       let item = {
@@ -393,6 +438,22 @@ export default {
         this.$bvModal.hide(`modal[exp][upd][${this.key}]`)
       });
     },
+    saveTemplate() {
+      this.$db.ref("template/post").set(this.template, function(error) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Ok");
+        }
+      });
+      this.$nextTick(() => {
+        this.$bvModal.hide(`modal[exp][temp-edit]`)
+      });
+    },
+    mountTemplate(item) {
+      return this.template.replace('item.title', item.title)
+                        .replace('item.icon', item.icon);
+    }
   }
 };
 </script>

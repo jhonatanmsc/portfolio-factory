@@ -1,6 +1,13 @@
 import $ from 'jquery'
 import SmoothScroll from 'smooth-scroll'
 
+export function insertStrings(template, list) {
+  for(let item of list){
+    template.replace(`#${ item.key }#`, item.value);
+  }
+  return template;
+}
+
 export function activeLi(){
   'use strict';
   var scroll = new SmoothScroll('a[href*="#"]', {

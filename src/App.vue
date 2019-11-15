@@ -67,4 +67,8 @@ h1{
 .subsubtitle {
   font-size: 2rem;
 }
+.CodeMirror { min-height: 50px; border: 1px solid #ddd; }
+.CodeMirror pre { padding-left: 7px; line-height: 1.25; }
+.banner { background: #ffc; padding: 6px; border-bottom: 2px solid silver;  }
+.banner div { margin: 0 auto; max-width: 700px; text-align: center; }
 </style>

@@ -5,8 +5,7 @@
             <h2 class="mb-5">Skills</h2>
             <div class="subheading mb-3">Limguagens de programação &amp; Ferramentas</div>
             <ul class="list-inline dev-icons">
-                <li v-for="item in items" :key="item.title" class="list-inline-item">
-                  <i :title="item.title" :class="item.icon" :style="'color: '+item.color" aria-hidden="true"></i>
+                <li v-for="item in items" :key="item.title" v-html="mountTemplate(item)" class="list-inline-item">
                 </li>
             </ul>
 
@@ -38,7 +37,13 @@ export default {
     return {
       fields: ["title", "icon", "actions"],
       items: [],
+      template: null
     }
+  },
+  beforeMount: function() {
+    this.$db.ref("template/skills").on("value", snapshot => {
+      this.template = snapshot.val()
+    });
   },
   mounted: function() {
     this.$db.ref('skills')
@@ -46,8 +51,15 @@ export default {
         this.items = snapshot.val()
       })
   },
+  methods: {
+    mountTemplate(item) {
+      return this.template.replace('item.title', item.title)
+                          .replace('item.color', item.color)
+                          .replace('item.icon', item.icon);
+    }
+  }
 }
 </script>
 
-<style scoped>
+<style>
 </style>

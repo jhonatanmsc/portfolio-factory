@@ -3,15 +3,7 @@
         <section class="resume-section p-3 p-lg-5 d-flex justify-content-center" id="experience">
             <div class="w-100">
             <h2 class="mb-5 subtitle">Experiências</h2>
-                <div v-for="item in items" :key="item.title" class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-                    <div class="resume-content">
-                        <h3 class="mb-0 subsubtitle">{{ item.title }}</h3>
-                        <div class="subheading mb-3">{{ item.subtitle }}</div>
-                        <p>{{ item.descr }}</p>
-                    </div>
-                    <div class="resume-date text-md-right">
-                        <span class="text-primary">{{ strDateExp(item) }}</span>
-                    </div>
+                <div v-for="item in items" :key="item.title" v-html="mountTemplate(item)">
                 </div>
 
             </div>
@@ -26,9 +18,15 @@ export default {
     data() {
       return {
         items: [],
+        template: null
       }
     },
     computed: {
+    },
+    beforeMount: function() {
+        this.$db.ref("template/post").on("value", snapshot => {
+            this.template = snapshot.val()
+        });
     },
     mounted: function() {
         this.$db.ref('exp')
@@ -41,8 +39,11 @@ export default {
             })
     },
     methods: {
-        strDateExp(item) {
-            return strDate(item)
+        mountTemplate(item) {
+            return this.template.replace('item.title', item.title)
+                                .replace('item.subtitle', item.subtitle)
+                                .replace('item.descr', item.descr)
+                                .replace('item.date', strDate(item));
         }
     }
 }
