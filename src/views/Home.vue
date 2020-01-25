@@ -48,7 +48,7 @@ export default {
       skills: null,
     }
   },
-  mounted: function() {
+  mounted(){
     activeLi()
   },
   methods: {

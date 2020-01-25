@@ -13,8 +13,12 @@ let config = {
     appId: process.env.VUE_APP_APP_ID
 };
 
-export const firebaseApp = firebase.initializeApp(config)
-export const db = firebaseApp.database()
+const firebaseApp = firebase.initializeApp(config)
+const db = firebaseApp.database()
+
+export {
+    db
+}
 
 export default function install(Vue) {
     Object.defineProperty(Vue.prototype, '$firebase', {

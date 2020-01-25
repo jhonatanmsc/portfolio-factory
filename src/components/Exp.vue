@@ -23,12 +23,12 @@ export default {
     },
     computed: {
     },
-    beforeMount: function() {
+    beforeMount() {
         this.$db.ref("template/post").on("value", snapshot => {
             this.template = snapshot.val()
         });
     },
-    mounted: function() {
+    mounted() {
         this.$db.ref('exp')
             .on('value', snapshot => {
                 this.items = []

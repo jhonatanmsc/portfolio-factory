@@ -7,10 +7,7 @@
             <a href="mailto:jhonmscosta@gmail.com">jhonmscosta@gmail.com</a>
         </div>
         
-        <p class="lead mb-5">
-            Eu tenho experiência em sistemas restfull com django criando
-            ambientes de fácil gerenciamento e manutenção. Construir sistemas com 
-            clareza de estrutura e com alta produtividade são objetivos que sempre busco alcançar.</p>
+        <p class="lead mb-5">{{ intro }}</p>
             
         <div class="social-icons">
             <a href='https://github.com/jhonatanmsc'>
@@ -30,7 +27,22 @@
     </section>
     </div>
 </template>
-
+<script>
+export default {
+    name: 'intro',
+    data(){
+        return {
+            'intro': ''
+        }
+    },
+    mounted() {
+        this.$db.ref('intro')
+            .on('value', snapshot => {
+                    this.intro = snapshot.val()
+                })
+    },
+}
+</script>
 <style scoped>
 .jmsc {
     font-size: 6rem;

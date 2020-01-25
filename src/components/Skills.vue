@@ -40,12 +40,12 @@ export default {
       template: null
     }
   },
-  beforeMount: function() {
+  beforeMount() {
     this.$db.ref("template/skills").on("value", snapshot => {
       this.template = snapshot.val()
     });
   },
-  mounted: function() {
+  mounted() {
     this.$db.ref('skills')
       .on('value', snapshot => {
         this.items = snapshot.val()
@@ -53,9 +53,9 @@ export default {
   },
   methods: {
     mountTemplate(item) {
-      return this.template.replace('item.title', item.title)
-                          .replace('item.color', item.color)
-                          .replace('item.icon', item.icon);
+      return this.template.replace(/item.title/g, item.title)
+                          .replace(/item.color/g, item.color)
+                          .replace(/item.icon/g, item.icon);
     }
   }
 }
